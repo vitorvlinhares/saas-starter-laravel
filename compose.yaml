@@ -1,0 +1,80 @@
+services:
+    app:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        ports:
+            - '${APP_PORT:-8000}:80'
+        environment:
+            - APP_ENV=${APP_ENV:-local}
+            - APP_KEY=${APP_KEY}
+            - DB_CONNECTION=${DB_CONNECTION:-sqlite}
+            - DB_HOST=pgsql
+            - DB_PORT=5432
+            - DB_DATABASE=${DB_DATABASE:-saas_starter}
+            - DB_USERNAME=${DB_USERNAME:-saas_starter}
+            - DB_PASSWORD=${DB_PASSWORD:-secret}
+            - REDIS_HOST=redis
+            - MAIL_HOST=mailpit
+            - MAIL_PORT=1025
+        volumes:
+            - ./database/database.sqlite:/app/database/database.sqlite
+            - storage:/app/storage/app
+        depends_on:
+            - pgsql
+            - redis
+            - mailpit
+
+    queue:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        command: php artisan queue:work --tries=3
+        environment:
+            - APP_ENV=${APP_ENV:-local}
+            - APP_KEY=${APP_KEY}
+            - DB_CONNECTION=${DB_CONNECTION:-sqlite}
+            - DB_HOST=pgsql
+            - DB_PORT=5432
+            - DB_DATABASE=${DB_DATABASE:-saas_starter}
+            - DB_USERNAME=${DB_USERNAME:-saas_starter}
+            - DB_PASSWORD=${DB_PASSWORD:-secret}
+            - REDIS_HOST=redis
+            - MAIL_HOST=mailpit
+            - MAIL_PORT=1025
+        volumes:
+            - ./database/database.sqlite:/app/database/database.sqlite
+            - storage:/app/storage/app
+        depends_on:
+            - pgsql
+            - redis
+            - mailpit
+
+    pgsql:
+        image: postgres:17-alpine
+        environment:
+            - POSTGRES_DB=${DB_DATABASE:-saas_starter}
+            - POSTGRES_USER=${DB_USERNAME:-saas_starter}
+            - POSTGRES_PASSWORD=${DB_PASSWORD:-secret}
+        ports:
+            - '${FORWARD_DB_PORT:-5432}:5432'
+        volumes:
+            - pgsql-data:/var/lib/postgresql/data
+
+    redis:
+        image: redis:7-alpine
+        ports:
+            - '${FORWARD_REDIS_PORT:-6379}:6379'
+        volumes:
+            - redis-data:/data
+
+    mailpit:
+        image: axllent/mailpit:latest
+        ports:
+            - '${FORWARD_MAILPIT_PORT:-1025}:1025'
+            - '${FORWARD_MAILPIT_DASHBOARD_PORT:-8025}:8025'
+
+volumes:
+    pgsql-data:
+    redis-data:
+    storage:
