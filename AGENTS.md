@@ -6,11 +6,14 @@ Multi-tenant SaaS starter by Vitor Linhares (LV² Tech & Strategy). Public portf
 - Laravel 12, PHP 8.3+ (CI uses 8.4), Inertia 2 + React + TypeScript, shadcn/ui, Tailwind v4, Ziggy `route()`.
 - Laravel Cashier 16 (Stripe, test mode). SQLite by default; Postgres/Redis/Mailpit via Docker (optional).
 - Tests: PHPUnit class style (`tests/Feature/*Test.php`, `RefreshDatabase`). Not Pest.
+- Frontend unit tests: Vitest + Testing Library (`resources/js/**/*.test.{ts,tsx}`), kept small on purpose —
+  hooks/utilities/components only. Page-level behavior is already covered by PHPUnit's `assertInertia()`.
 
 ## Commands
 - `composer install` / `npm install`
 - `php artisan migrate:fresh --seed` (demo login: test@example.com / password)
 - `php artisan test` (must stay green)
+- `npm run test` (frontend unit tests, must stay green)
 - `composer run dev` (server + vite + queue)
 - `vendor/bin/pint`, `npm run lint`, `npm run format`, `npx tsc --noEmit`
 

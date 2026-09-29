@@ -108,6 +108,15 @@ Feature tests (PHPUnit, class-style, `RefreshDatabase`) cover tenancy isolation,
 and billing. Keep it green before opening a PR.
 
 ```bash
+npm run test
+```
+
+Frontend unit tests (Vitest + Testing Library) cover hooks and components with real logic — `cn()`'s class
+merging, `useInitials()`, `useIsMobile()`, `InputError`'s conditional render. The pages themselves are already
+exercised end-to-end by the PHPUnit feature tests via `assertInertia()`, so this suite stays intentionally small
+rather than re-testing the same flows from the frontend.
+
+```bash
 vendor/bin/pint          # PHP code style
 npm run lint              # frontend lint
 npm run format             # frontend formatting

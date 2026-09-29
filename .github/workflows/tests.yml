@@ -40,6 +40,9 @@ jobs:
       - name: Type-check Frontend
         run: npx tsc --noEmit
 
+      - name: Frontend Tests
+        run: npm run test
+
       - name: Build Assets
         run: npm run build
 
